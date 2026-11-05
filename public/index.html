@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EasyFood</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF6EF;
+    --ink: #1B1810;
+    --ink-soft: #5C5647;
+    --coral: #E4572E;
+    --coral-deep: #C43F1C;
+    --line: #E4DCC8;
+    --card: #FFFFFF;
+    --green: #3E7A4C;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 96px; }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 36px; border-bottom: 1px solid var(--line); padding-bottom: 18px;
+  }
+  .wordmark { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; }
+  .wordmark span { color: var(--coral); }
+  .user-bar { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--ink-soft); }
+  .user-bar strong { color: var(--ink); }
+  .logout-btn {
+    background: none; border: 1px solid var(--line); border-radius: 3px;
+    padding: 7px 12px; font-size: 13px; cursor: pointer; color: var(--ink-soft);
+  }
+  .logout-btn:hover { border-color: var(--coral); color: var(--coral-deep); }
+
+  /* AUTH SCREEN */
+  .auth-wrap { max-width: 400px; margin: 60px auto; padding: 0 20px; }
+  .auth-card { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 32px; }
+  .auth-title { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; margin-bottom: 6px; }
+  .auth-sub { color: var(--ink-soft); font-size: 14px; margin-bottom: 24px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 5px; }
+  input {
+    font-family: 'Inter', sans-serif; font-size: 14px; padding: 11px 12px;
+    border: 1px solid var(--line); border-radius: 3px; background: var(--cream); color: var(--ink); width: 100%;
+  }
+  input:focus { outline: none; border-color: var(--coral); }
+  input::placeholder { color: #A69C82; }
+  select {
+    font-family: 'Inter', sans-serif; font-size: 13px; padding: 9px 10px;
+    border: 1px solid var(--line); border-radius: 3px; background: var(--card); color: var(--ink);
+  }
+  button.primary {
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; padding: 11px 18px;
+    border: none; border-radius: 3px; background: var(--coral); color: #FFF7F0; cursor: pointer; width: 100%;
+  }
+  button.primary:hover { background: var(--coral-deep); }
+  button.primary:disabled { background: #C9C2AE; cursor: default; }
+  .toggle-mode { text-align: center; font-size: 13px; color: var(--ink-soft); margin-top: 18px; }
+  .toggle-mode a { color: var(--coral-deep); cursor: pointer; font-weight: 600; text-decoration: none; }
+  .error { color: var(--coral-deep); font-size: 13px; margin-top: 10px; display: none; }
+
+  /* STATS */
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
+  .stat-card { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 16px; }
+  .stat-value { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; color: var(--coral-deep); }
+  .stat-label { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  @media (max-width: 560px) { .stats-row { grid-template-columns: 1fr; } }
+
+  /* FORM */
+  form.restaurant-form { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 22px; margin-bottom: 32px; }
+  .form-title { font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-bottom: 14px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+  .form-actions { display: flex; gap: 8px; margin-top: 4px; }
+  .form-actions button.primary { width: auto; flex: 1; }
+  button.cancel {
+    background: none; border: 1px solid var(--line); border-radius: 3px;
+    padding: 11px 16px; font-size: 14px; cursor: pointer; color: var(--ink-soft);
+  }
+
+  /* FILTER */
+  .filter-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+  .filter-row .count { font-size: 13px; color: var(--ink-soft); margin-left: auto; }
+
+  /* LIST */
+  ul.list { list-style: none; margin: 0; padding: 0; }
+  li.item {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line);
+  }
+  li.item:first-child { border-top: 1px solid var(--line); }
+  .name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; }
+  .category { font-size: 12px; color: var(--coral-deep); font-weight: 600; margin-top: 2px; }
+  .meta { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+  .rating { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: var(--coral-deep); flex-shrink: 0; }
+  .rating .max { font-size: 11px; color: var(--ink-soft); font-family: 'Inter', sans-serif; font-weight: 400; }
+  .item-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .item-actions button {
+    font-size: 12px; padding: 5px 10px; border-radius: 3px; border: 1px solid var(--line);
+    background: none; cursor: pointer; color: var(--ink-soft);
+  }
+  .item-actions button:hover { border-color: var(--coral); color: var(--coral-deep); }
+  .item-right { display: flex; flex-direction: column; align-items: flex-end; }
+  .empty { padding: 40px 0; text-align: center; color: var(--ink-soft); font-size: 14px; }
+  .empty strong { display: block; font-family: 'Fraunces', serif; font-size: 19px; color: var(--ink); font-weight: 600; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div class="auth-wrap" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-title" id="authTitle">Entrar</div>
+    <div class="auth-sub" id="authSub">Acesse sua conta EasyFood</div>
+    <form id="authForm">
+      <div class="field" id="nameField" style="display:none">
+        <label>Nome</label>
+        <input id="authName" placeholder="Seu nome" />
+      </div>
+      <div class="field">
+        <label>E-mail</label>
+        <input id="authEmail" type="email" placeholder="voce@email.com" required />
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input id="authPassword" type="password" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="primary" id="authSubmitBtn">Entrar</button>
+      <div class="error" id="authError"></div>
+    </form>
+    <div class="toggle-mode">
+      <span id="toggleText">Não tem conta?</span> <a id="toggleLink">Cadastre-se</a>
+    </div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div class="wrap" id="appScreen" style="display:none">
+  <header>
+    <div class="wordmark">Easy<span>Food</span></div>
+    <div class="user-bar">
+      <span>Olá, <strong id="userName"></strong></span>
+      <button class="logout-btn" id="logoutBtn">Sair</button>
+    </div>
+  </header>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-value" id="statTotal">—</div><div class="stat-label">Restaurantes</div></div>
+    <div class="stat-card"><div class="stat-value" id="statCategories">—</div><div class="stat-label">Categorias</div></div>
+    <div class="stat-card"><div class="stat-value" id="statAvg">—</div><div class="stat-label">Avaliação média</div></div>
+  </div>
+
+  <form class="restaurant-form" id="restaurantForm">
+    <div class="form-title" id="formTitle">ADICIONAR RESTAURANTE</div>
+    <div class="grid2">
+      <input id="rName" placeholder="Nome" required />
+      <input id="rCategory" placeholder="Categoria" required />
+    </div>
+    <div class="grid2">
+      <input id="rAddress" placeholder="Endereço" />
+      <input id="rPhone" placeholder="Telefone" />
+    </div>
+    <div class="grid2">
+      <input id="rRating" placeholder="Nota (0 a 5)" type="number" min="0" max="5" step="0.1" />
+      <div></div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="primary" id="formSubmitBtn">Adicionar</button>
+      <button type="button" class="cancel" id="formCancelBtn" style="display:none">Cancelar</button>
+    </div>
+    <div class="error" id="formError"></div>
+  </form>
+
+  <div class="filter-row">
+    <select id="categoryFilter"><option value="">Todas as categorias</option></select>
+    <div class="count" id="listCount">carregando…</div>
+  </div>
+
+  <ul class="list" id="list"></ul>
+</div>
+
+<script>
+  const API = '';
+  let token = localStorage.getItem('easyfood_token');
+  let currentUser = JSON.parse(localStorage.getItem('easyfood_user') || 'null');
+  let allRestaurants = [];
+  let editingId = null;
+  let authMode = 'login';
+
+  const authScreen = document.getElementById('authScreen');
+  const appScreen = document.getElementById('appScreen');
+
+  function showApp() {
+    authScreen.style.display = 'none';
+    appScreen.style.display = 'block';
+    document.getElementById('userName').textContent = currentUser?.name || '';
+    loadStats();
+    loadRestaurants();
+  }
+  function showAuth() {
+    authScreen.style.display = 'block';
+    appScreen.style.display = 'none';
+  }
+
+  // ---------- AUTH ----------
+  const authForm = document.getElementById('authForm');
+  const authError = document.getElementById('authError');
+  const toggleLink = document.getElementById('toggleLink');
+
+  toggleLink.addEventListener('click', () => {
+    authMode = authMode === 'login' ? 'register' : 'login';
+    document.getElementById('nameField').style.display = authMode === 'register' ? 'block' : 'none';
+    document.getElementById('authTitle').textContent = authMode === 'login' ? 'Entrar' : 'Criar conta';
+    document.getElementById('authSub').textContent = authMode === 'login' ? 'Acesse sua conta EasyFood' : 'Comece a organizar seus restaurantes';
+    document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? 'Entrar' : 'Cadastrar';
+    document.getElementById('toggleText').textContent = authMode === 'login' ? 'Não tem conta?' : 'Já tem conta?';
+    toggleLink.textContent = authMode === 'login' ? 'Cadastre-se' : 'Entrar';
+    authError.style.display = 'none';
+  });
+
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    authError.style.display = 'none';
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const name = document.getElementById('authName').value.trim();
+    const btn = document.getElementById('authSubmitBtn');
+    btn.disabled = true;
+
+    try {
+      if (authMode === 'register') {
+        const res = await fetch(`${API}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        const body = await res.json();
+        if (!res.ok) throw new Error(body.error || 'Erro ao cadastrar');
+        toggleLink.click(); // volta para login
+        document.getElementById('authEmail').value = email;
+      } else {
+        const res = await fetch(`${API}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const body = await res.json();
+        if (!res.ok) throw new Error(body.error || 'Erro ao entrar');
+        token = body.token;
+        currentUser = body.user;
+        localStorage.setItem('easyfood_token', token);
+        localStorage.setItem('easyfood_user', JSON.stringify(currentUser));
+        authForm.reset();
+        showApp();
+      }
+    } catch (err) {
+      authError.textContent = err.message;
+      authError.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    token = null;
+    currentUser = null;
+    localStorage.removeItem('easyfood_token');
+    localStorage.removeItem('easyfood_user');
+    showAuth();
+  });
+
+  // ---------- STATS ----------
+  async function loadStats() {
+    try {
+      const res = await fetch(`${API}/restaurants/stats`);
+      const data = await res.json();
+      document.getElementById('statTotal').textContent = data.total;
+      document.getElementById('statCategories').textContent = Object.keys(data.categories).length;
+      document.getElementById('statAvg').textContent = data.averageRating ? data.averageRating.toFixed(1) : '—';
+
+      const filter = document.getElementById('categoryFilter');
+      const current = filter.value;
+      filter.innerHTML = '<option value="">Todas as categorias</option>' +
+        Object.keys(data.categories).sort().map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+      filter.value = current;
+    } catch (err) { /* silencioso */ }
+  }
+
+  // ---------- LIST ----------
+  async function loadRestaurants() {
+    const category = document.getElementById('categoryFilter').value;
+    try {
+      const url = category ? `${API}/restaurants?category=${encodeURIComponent(category)}` : `${API}/restaurants`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Falha ao buscar restaurantes');
+      allRestaurants = await res.json();
+      renderList(allRestaurants);
+    } catch (err) {
+      document.getElementById('listCount').textContent = 'erro ao carregar';
+      document.getElementById('list').innerHTML = `<li class="empty"><strong>Não foi possível carregar</strong>Confira se o servidor está rodando.</li>`;
+    }
+  }
+
+  document.getElementById('categoryFilter').addEventListener('change', loadRestaurants);
+
+  function renderList(restaurants) {
+    document.getElementById('listCount').textContent = restaurants.length === 1 ? '1 restaurante' : `${restaurants.length} restaurantes`;
+    const list = document.getElementById('list');
+
+    if (restaurants.length === 0) {
+      list.innerHTML = `<li class="empty"><strong>Nenhum restaurante ainda</strong>Adicione o primeiro no formulário acima.</li>`;
+      return;
+    }
+
+    list.innerHTML = restaurants.map(r => `
+      <li class="item">
+        <div>
+          <div class="name">${escapeHtml(r.name)}</div>
+          ${r.category ? `<div class="category">${escapeHtml(r.category)}</div>` : ''}
+          ${(r.address || r.phone) ? `<div class="meta">${escapeHtml(r.address || '')}${r.address && r.phone ? ' · ' : ''}${escapeHtml(r.phone || '')}</div>` : ''}
+          <div class="item-actions">
+            <button onclick="startEdit(${r.id})">Editar</button>
+            <button onclick="deleteRestaurant(${r.id})">Excluir</button>
+          </div>
+        </div>
+        <div class="item-right">
+          <div class="rating">${r.rating != null ? Number(r.rating).toFixed(1) : '—'}<span class="max">/5</span></div>
+        </div>
+      </li>
+    `).join('');
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str ?? '';
+    return div.innerHTML;
+  }
+
+  // ---------- FORM (create / edit) ----------
+  const restaurantForm = document.getElementById('restaurantForm');
+  const formError = document.getElementById('formError');
+  const cancelBtn = document.getElementById('formCancelBtn');
+
+  restaurantForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formError.style.display = 'none';
+
+    const payload = {
+      name: document.getElementById('rName').value.trim(),
+      category: document.getElementById('rCategory').value.trim(),
+      address: document.getElementById('rAddress').value.trim() || undefined,
+      phone: document.getElementById('rPhone').value.trim() || undefined,
+      rating: document.getElementById('rRating').value ? parseFloat(document.getElementById('rRating').value) : undefined
+    };
+
+    const btn = document.getElementById('formSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = editingId ? 'Salvando…' : 'Adicionando…';
+
+    try {
+      const url = editingId ? `${API}/restaurants/${editingId}` : `${API}/restaurants`;
+      const method = editingId ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Erro ao salvar restaurante');
+      }
+
+      resetForm();
+      await Promise.all([loadRestaurants(), loadStats()]);
+    } catch (err) {
+      formError.textContent = err.message;
+      formError.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = editingId ? 'Salvar' : 'Adicionar';
+    }
+  });
+
+  cancelBtn.addEventListener('click', resetForm);
+
+  function resetForm() {
+    restaurantForm.reset();
+    editingId = null;
+    document.getElementById('formTitle').textContent = 'ADICIONAR RESTAURANTE';
+    document.getElementById('formSubmitBtn').textContent = 'Adicionar';
+    cancelBtn.style.display = 'none';
+    formError.style.display = 'none';
+  }
+
+  window.startEdit = function (id) {
+    const r = allRestaurants.find(x => x.id === id);
+    if (!r) return;
+    editingId = id;
+    document.getElementById('rName').value = r.name || '';
+    document.getElementById('rCategory').value = r.category || '';
+    document.getElementById('rAddress').value = r.address || '';
+    document.getElementById('rPhone').value = r.phone || '';
+    document.getElementById('rRating').value = r.rating != null ? Number(r.rating) : '';
+    document.getElementById('formTitle').textContent = 'EDITAR RESTAURANTE';
+    document.getElementById('formSubmitBtn').textContent = 'Salvar';
+    cancelBtn.style.display = 'inline-block';
+    restaurantForm.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.deleteRestaurant = async function (id) {
+    if (!confirm('Excluir este restaurante?')) return;
+    try {
+      const res = await fetch(`${API}/restaurants/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok && res.status !== 204) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Erro ao excluir');
+      }
+      await Promise.all([loadRestaurants(), loadStats()]);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // ---------- INIT ----------
+  if (token && currentUser) {
+    showApp();
+  } else {
+    showAuth();
+  }
+</script>
+</body>
+</html>
