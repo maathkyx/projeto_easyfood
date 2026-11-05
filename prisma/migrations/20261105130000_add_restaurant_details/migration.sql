@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Restaurant" ADD COLUMN     "address" VARCHAR(255),
+ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "phone" VARCHAR(30);
